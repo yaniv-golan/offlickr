@@ -1,0 +1,32 @@
+{% extends "base.html.j2" %}
+{% set active = 'faves' %}
+{% block title %}Favorites — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Favorites</h1>
+{% if faves %}
+<div class="photostream-grid">
+  {% for fave in faves %}
+  {% if fave.thumbnail_path %}
+  <a href="{{ fave.photo_url_short }}" rel="noopener noreferrer external"
+     class="grid-tile" style="flex-basis:var(--thumb-h)">
+    <img src="{{ base_url }}{{ fave.thumbnail_path | e }}" alt="Favorited photo" loading="lazy">
+  </a>
+  {% else %}
+  <a href="{{ fave.photo_url_short }}" rel="noopener noreferrer external"
+     class="grid-tile fave-tombstone">
+    <span class="tombstone-label">Photo on Flickr ↗</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% if pagination and pagination.total > 1 %}
+<nav class="pagination" aria-label="Page navigation">
+  {% if pagination.prev_url %}<a href="{{ pagination.prev_url }}" class="page-link">&larr; Previous</a>{% else %}<span class="page-link disabled">&larr;</span>{% endif %}
+  <span class="page-current">Page {{ pagination.current }} of {{ pagination.total }}</span>
+  {% if pagination.next_url %}<a href="{{ pagination.next_url }}" class="page-link">Next &rarr;</a>{% else %}<span class="page-link disabled">&rarr;</span>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<p class="empty-state">No favorites in this archive.</p>
+{% endif %}
+{% endblock %}

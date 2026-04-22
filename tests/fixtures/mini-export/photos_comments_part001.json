@@ -1,0 +1,16 @@
+[
+  {
+    "comment_id": "oc1",
+    "photo_id": "99888777",
+    "photo_url": "https://www.flickr.com/photos/someone/99888777/",
+    "comment": "Great shot!",
+    "date": "2021-05-10 14:23:00"
+  },
+  {
+    "comment_id": "oc2",
+    "photo_id": "99888778",
+    "photo_url": "https://www.flickr.com/photos/someone/99888778/",
+    "comment": "<p>Love the colors here.</p>",
+    "date": "2021-06-20 09:00:00"
+  }
+]

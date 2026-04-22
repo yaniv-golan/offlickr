@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% set active = 'groups' %}
+{% block title %}Groups — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Groups</h1>
+{% if groups %}
+<ul class="groups-list">
+  {% for group in groups %}
+  <li class="group-item">
+    <a href="{{ group.url_flickr }}" rel="noopener noreferrer external"
+       class="external-link group-link">{{ group.name | e }}</a>
+    {% if group.user_role %}<span class="group-role">{{ group.user_role | e }}</span>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">No groups in this archive.</p>
+{% endif %}
+{% endblock %}

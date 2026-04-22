@@ -1,0 +1,31 @@
+{
+  "real_name": "Test User",
+  "join_date": "2005-08-31 03:47:36",
+  "description": "Fixture account for offlickr tests.",
+  "occupation": "",
+  "hometown": "",
+  "city": "Test City",
+  "country": "Test Country",
+  "email": "test@example.invalid",
+  "social": { "facebook": "", "twitter": "", "instagram": "@testuser", "pintrest": "", "tumblr": "" },
+  "website_url": "",
+  "profile_url": "https://www.flickr.com/people/testuser/",
+  "nsid": "99999999@N00",
+  "path_alias": "testuser",
+  "screen_name": "testuser",
+  "pro_user": "no",
+  "showcase": { "photos": ["10000001"] },
+  "settings": {
+    "who_can_download_photos": "anyone",
+    "default_license": "CC BY-NC-SA 4.0",
+    "photostream_safety_level": "safe"
+  },
+  "stats": {
+    "view_counts": { "photos": 10, "photostream": 5, "sets": 2, "collections": 0, "galleries": 0, "total": 17 },
+    "tags_count": 4,
+    "geotags_count": 1,
+    "faves_count": "2",
+    "groups_count": "1",
+    "comments_count": { "photos": "3", "sets": "0", "apps": "0", "galleries": "0" }
+  }
+}

@@ -1,0 +1,172 @@
+{% extends "base.html.j2" %}
+{% set active = 'photos' %}
+{% block title %}{{ photo.title }} — {{ account.screen_name }}{% endblock %}
+
+{% block photo_hero %}
+{% if photo.media %}
+<div class="photo-hero">
+  {% if photo.media.kind == 'image' %}
+  <figure class="photo-figure">
+    <img src="{{ base_url }}display/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}"
+         class="photo-display"
+         {% if photo.media.width and photo.media.height %}
+         width="{{ photo.media.width }}" height="{{ photo.media.height }}"
+         {% endif %}>
+    {% if display_notes and photo.media.width and photo.media.height %}
+    <div class="notes-layer" aria-hidden="true">
+      {% for note in display_notes %}
+      <div class="note-overlay"
+           title="{{ note.body | e }}"
+           style="left:{{ '%.3f' | format(note.x * 100.0 / photo.media.width) }}%;top:{{ '%.3f' | format(note.y * 100.0 / photo.media.height) }}%;width:{{ '%.3f' | format(note.w * 100.0 / photo.media.width) }}%;height:{{ '%.3f' | format(note.h * 100.0 / photo.media.height) }}%"></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </figure>
+  {% elif photo.media.kind == 'video' %}
+  <figure class="photo-figure">
+    <video controls class="photo-display" preload="metadata">
+      <source src="{{ base_url }}originals/{{ photo.id }}{{ photo.media.ext }}">
+      <a href="{{ base_url }}originals/{{ photo.id }}{{ photo.media.ext }}">Download video</a>
+    </video>
+  </figure>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<article class="photo-detail">
+  <h1 dir="auto">{{ photo.title | e }}</h1>
+
+  <p class="photo-links">
+    <a href="{{ photo.photopage_url }}" rel="noopener noreferrer external" class="external-link">View on Flickr</a>
+    {% if photo.media %}
+    &nbsp;·&nbsp;
+    <a href="{{ base_url }}originals/{{ photo.id }}{{ photo.media.ext }}">Download original</a>
+    {% endif %}
+  </p>
+
+  {% if photo.description_html %}
+  <div class="photo-description" dir="auto">{{ photo.description_html | rewrite_urls(base_url) | safe }}</div>
+  {% endif %}
+
+  <dl class="photo-meta">
+    {% if photo.date_taken %}
+    <dt>Taken</dt><dd><time datetime="{{ photo.date_taken.isoformat() }}">{{ photo.date_taken | format_date }}</time></dd>
+    {% endif %}
+    <dt>Imported</dt><dd><time datetime="{{ photo.date_imported.isoformat() }}">{{ photo.date_imported | format_date }}</time></dd>
+    <dt>Privacy</dt><dd>{{ photo.privacy | privacy_label }}</dd>
+    {% if photo.safety and photo.safety != 'safe' %}
+    <dt>Safety</dt><dd class="safety-{{ photo.safety | e }}">{{ photo.safety | title }}</dd>
+    {% endif %}
+    {% if photo.license %}<dt>License</dt><dd>{{ photo.license | e }}</dd>{% endif %}
+    {% if photo.geo %}
+    <dt>Location</dt>
+    <dd>{{ '%.4f' | format(photo.geo.lat) }}, {{ '%.4f' | format(photo.geo.lng) }}
+      {% if has_map %}<a href="{{ base_url }}map.html">(map)</a>{% endif %}
+    </dd>
+    {% endif %}
+    {% if photo.counts.get('views') %}<dt>Views</dt><dd>{{ photo.counts['views'] | format_number }}</dd>{% endif %}
+    {% if photo.counts.get('faves') %}<dt>Faves</dt><dd>{{ photo.counts['faves'] | format_number }}</dd>{% endif %}
+    {% if photo.counts.get('comments') %}<dt>Comments</dt><dd>{{ photo.counts['comments'] | format_number }}</dd>{% endif %}
+    {% if photo.exif %}
+    {% if photo.exif.camera_make or photo.exif.camera_model %}
+    <dt>Camera</dt><dd>{{ [photo.exif.camera_make, photo.exif.camera_model] | select | join(' ') | e }}</dd>
+    {% endif %}
+    {% if photo.exif.lens_model %}<dt>Lens</dt><dd>{{ photo.exif.lens_model | e }}</dd>{% endif %}
+    {% if photo.exif.focal_length_mm %}<dt>Focal length</dt><dd>{{ photo.exif.focal_length_mm }}mm</dd>{% endif %}
+    {% if photo.exif.aperture %}<dt>Aperture</dt><dd>f/{{ photo.exif.aperture }}</dd>{% endif %}
+    {% if photo.exif.shutter_speed %}<dt>Shutter</dt><dd>{{ photo.exif.shutter_speed | e }}</dd>{% endif %}
+    {% if photo.exif.iso %}<dt>ISO</dt><dd>{{ photo.exif.iso }}</dd>{% endif %}
+    {% endif %}
+  </dl>
+
+  {% if photo.geo and world_svg_content %}
+  <figure class="geo-inset" aria-label="Photo location on world map">
+    {{ world_svg_content | add_geo_pin(photo.geo.lat, photo.geo.lng) | safe }}
+  </figure>
+  {% endif %}
+
+  {% if photo.tags %}
+  <ul class="photo-tags" aria-label="Tags">
+    {% for tag in photo.tags %}
+    <li><a href="{{ base_url }}tags/{{ tag_slug_map[tag.tag] }}.html">{{ tag.tag | e }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if photo.people %}
+  <div class="photo-people">
+    <h3>People: </h3>
+    <ul>
+      {% for person in photo.people %}
+      <li><a href="{{ person.profile_url | e }}" rel="noopener noreferrer external">{{ person.username | e }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if photo.album_refs %}
+  <div class="photo-in-albums">
+    <h3>In albums: </h3>
+    <ul>
+      {% for ref in photo.album_refs %}
+      <li><a href="{{ base_url }}albums/{{ ref.id }}.html">{{ ref.title | e }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if gallery_refs %}
+  <div class="photo-in-galleries">
+    <h3>In galleries: </h3>
+    <ul>
+      {% for g in gallery_refs %}
+      <li><a href="{{ base_url }}galleries/{{ g.id }}.html">{{ g.title | e }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if photo.groups %}
+  <div class="photo-in-groups">
+    <h3>In groups: </h3>
+    <ul>
+      {% for grp in photo.groups %}
+      <li><a href="{{ grp.url_flickr | e }}" rel="noopener noreferrer external">{{ grp.name | e }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if photo.comments %}
+  <section class="comments" aria-label="Comments">
+    <h2>Comments ({{ photo.comments | length | format_number }})</h2>
+    {% for comment in photo.comments %}
+    <article class="comment">
+      <header class="comment-header">
+        {% set _author = users.get(comment.user_nsid) %}
+        {% set _name = (_author.screen_name if _author and _author.screen_name else comment.user_nsid) %}
+        {% set _url = (_author.profile_url if _author and _author.profile_url else "https://www.flickr.com/people/" ~ comment.user_nsid ~ "/") %}
+        {% if _author and _author.avatar_path %}
+        <img src="{{ base_url }}{{ _author.avatar_path | e }}" alt="{{ _name | e }}" class="avatar-img">
+        {% else %}
+        <span class="avatar-circle" aria-hidden="true">{{ _name[0] | upper }}</span>
+        {% endif %}
+        <a href="{{ _url | e }}" rel="noopener noreferrer external" class="comment-author">{{ _name | e }}</a>
+        <time datetime="{{ comment.date.isoformat() }}">{{ comment.date | format_date }}</time>
+      </header>
+      <div class="comment-body" dir="auto">{{ comment.body_html | rewrite_urls(base_url) | safe }}</div>
+    </article>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <nav class="photo-nav" aria-label="Photo navigation">
+    <div>{% if prev_photo %}<a href="{{ base_url }}photo/{{ prev_photo.id }}.html">&larr; {{ prev_photo.title | e }}</a>{% endif %}</div>
+    <a href="{{ base_url }}index.html">All Photos</a>
+    <div>{% if next_photo %}<a href="{{ base_url }}photo/{{ next_photo.id }}.html">{{ next_photo.title | e }} &rarr;</a>{% endif %}</div>
+  </nav>
+</article>
+{% endblock %}

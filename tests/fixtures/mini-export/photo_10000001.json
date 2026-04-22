@@ -1,0 +1,32 @@
+{
+  "id": "10000001",
+  "name": "שקיעה כחולה",
+  "description": "",
+  "count_views": "1",
+  "count_faves": "0",
+  "count_comments": "1",
+  "date_taken": "2020-03-15 17:30:00",
+  "count_tags": "2",
+  "count_notes": "1",
+  "rotation": 0,
+  "date_imported": "2020-03-15 18:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000001/",
+  "original": "https://live.staticflickr.com/9999/10000001_aaaaaaaaaa_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [{"latitude": "32085000", "longitude": "34781000", "accuracy": "16"}],
+  "groups": [{"id": "11111111@N00", "name": "Test Group", "url": "https://www.flickr.com/groups/testgroup/"}],
+  "albums": [{"id": "10000000000000001", "title": "Album One", "url": "https://www.flickr.com/photos/testuser/sets/10000000000000001/"}],
+  "tags": [
+    {"tag": "sunset", "user": "https://www.flickr.com/photos/testuser/", "date_create": "2020-03-15 18:00:00"},
+    {"tag": "שקיעה", "user": "https://www.flickr.com/photos/testuser/", "date_create": "2020-03-15 18:00:00"}
+  ],
+  "people": [{"nsid": "77777777@N00", "username": "testfriend", "userurl": "https://www.flickr.com/people/testfriend/"}],
+  "notes": [{"id": "n1", "x": 10, "y": 20, "w": 100, "h": 50, "note": "See the building", "author": "77777777@N00"}],
+  "privacy": "public",
+  "comment_permissions": "any flickr member",
+  "tagging_permissions": "people you follow",
+  "safety": "safe",
+  "comments": [
+    {"id": "c1", "date": "2020-03-15 20:00:00", "user": "77777777@N00", "comment": "Nice shot!", "url": "https://www.flickr.com/photos/testuser/10000001//#commentc1"}
+  ]
+}

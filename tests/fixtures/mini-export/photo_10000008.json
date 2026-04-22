@@ -1,0 +1,24 @@
+{
+  "id": "10000008",
+  "name": "Test photo 8 (tags)",
+  "description": "",
+  "count_views": "0", "count_faves": "0", "count_comments": "0",
+  "date_taken": "2020-10-01 09:00:00",
+  "count_tags": "4", "count_notes": "0", "rotation": 0,
+  "date_imported": "2020-10-01 10:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000008/",
+  "original": "https://live.staticflickr.com/9999/10000008_hhhhhhhhhh_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [],
+  "groups": [], "albums": [],
+  "tags": [
+    {"tag": "alpha", "user": "https://www.flickr.com/photos/testuser/", "date_create": "2020-10-01 10:00:00"},
+    {"tag": "beta", "user": "https://www.flickr.com/photos/testuser/", "date_create": "2020-10-01 10:00:00"},
+    {"tag": "gamma", "user": "https://www.flickr.com/photos/testuser/", "date_create": "2020-10-01 10:00:00"},
+    {"tag": "delta", "user": "https://www.flickr.com/photos/testuser/", "date_create": "2020-10-01 10:00:00"}
+  ],
+  "people": [], "notes": [],
+  "privacy": "public",
+  "comment_permissions": "any flickr member", "tagging_permissions": "people you follow",
+  "safety": "safe", "comments": []
+}

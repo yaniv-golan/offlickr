@@ -1,0 +1,43 @@
+{% extends "base.html.j2" %}
+{% set active = 'albums' %}
+{% block title %}{{ album.title }} — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title" dir="auto">{{ album.title | e }}</h1>
+{% if album.description_html %}
+<div class="album-description" dir="auto">{{ album.description_html | safe }}</div>
+{% endif %}
+<p class="album-meta">
+  {{ album.photo_count | format_number }} photos &middot;
+  <a href="{{ album.url_flickr }}" rel="noopener noreferrer external" class="external-link">View on Flickr</a>
+</p>
+<div class="photostream-grid">
+  {% for photo in photos %}
+  {% if photo.media %}
+  {% set ratio = (photo.media.width / photo.media.height) if (photo.media.width and photo.media.height) else 1.0 %}
+  <a href="{{ base_url }}photo/{{ photo.id }}.html" class="grid-tile"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}" loading="lazy">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% if comments %}
+<section class="comments album-comments" aria-label="Comments">
+  <h2>Comments ({{ comments | length }})</h2>
+  {% for comment in comments %}
+  <article class="comment">
+    <header class="comment-header">
+      <span class="comment-author">
+        <a href="https://www.flickr.com/people/{{ comment.user_nsid | e }}/" rel="noopener noreferrer external">{{ comment.user_nsid | e }}</a>
+      </span>
+      <time datetime="{{ comment.date.isoformat() }}">{{ comment.date | format_date }}</time>
+    </header>
+    <div class="comment-body" dir="auto">{{ comment.body_html | rewrite_urls(base_url) | safe }}</div>
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

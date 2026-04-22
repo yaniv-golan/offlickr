@@ -1,0 +1,20 @@
+{
+  "testimonials": {
+    "given": [
+      {
+        "author_or_subject_screen_name": "anotherfriend",
+        "profile_url": "https://www.flickr.com/people/anotherfriend/",
+        "body": "<p>Wonderful photographer!</p>",
+        "created": "2016-02-20 14:45:00"
+      }
+    ],
+    "received": [
+      {
+        "author_or_subject_screen_name": "frienduser",
+        "profile_url": "https://www.flickr.com/people/frienduser/",
+        "body": "<p>Great photos!</p>",
+        "created": "2015-06-15 10:30:00"
+      }
+    ]
+  }
+}

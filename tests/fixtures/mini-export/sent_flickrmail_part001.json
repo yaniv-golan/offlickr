@@ -1,0 +1,12 @@
+[
+  {
+    "id": "fm001",
+    "from": "99999999@N00",
+    "to": "12345678@N00",
+    "to_username": "frienduser",
+    "subject": "Hi there",
+    "body": "<p>Just checking in!</p>",
+    "date_sent": "2021-03-15 10:00:00",
+    "deleted": ""
+  }
+]

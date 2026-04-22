@@ -1,0 +1,44 @@
+{% extends "base.html.j2" %}
+{% set active = 'about' %}
+{% block title %}Testimonials — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Testimonials</h1>
+
+{% if testimonials.received %}
+<section class="testimonials-section">
+  <h2>Testimonials I received</h2>
+  {% for t in testimonials.received %}
+  <article class="testimonial">
+    <header class="testimonial-header">
+      <a href="{{ t.profile_url | e }}" rel="noopener noreferrer external"
+         class="external-link">{{ t.author_or_subject_screen_name | e }}</a>
+      <time datetime="{{ t.created.isoformat() }}">{{ t.created | format_date }}</time>
+    </header>
+    <div class="testimonial-body" dir="auto">{{ t.body_html | safe }}</div>
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if testimonials.given %}
+<section class="testimonials-section">
+  <h2>Testimonials I wrote</h2>
+  {% for t in testimonials.given %}
+  <article class="testimonial">
+    <header class="testimonial-header">
+      <a href="{{ t.profile_url | e }}" rel="noopener noreferrer external"
+         class="external-link">{{ t.author_or_subject_screen_name | e }}</a>
+      <time datetime="{{ t.created.isoformat() }}">{{ t.created | format_date }}</time>
+    </header>
+    <div class="testimonial-body" dir="auto">{{ t.body_html | safe }}</div>
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if not testimonials.given and not testimonials.received %}
+<p class="empty-state">No testimonials in this archive.</p>
+{% endif %}
+
+<p><a href="{{ base_url }}about.html">&larr; About</a></p>
+{% endblock %}

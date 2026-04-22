@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+{% set active = 'map' %}
+{% block title %}Map — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Map</h1>
+<p class="map-subtitle">{{ geo_photos | length | format_number }} geotagged photos</p>
+<div class="map-container">
+  <div class="world-map" role="img" aria-label="World map with photo locations">
+    {{ world_svg_content | safe }}
+  </div>
+  <div id="map-tooltip" class="map-tooltip" hidden></div>
+</div>
+<script>
+var MAP_PHOTOS = {{ geo_photos | tojson }};
+var MAP_BASE = "{{ base_url }}";
+</script>
+<script src="{{ base_url }}assets/map.js"></script>
+{% endblock %}

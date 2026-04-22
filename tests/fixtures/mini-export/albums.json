@@ -1,0 +1,28 @@
+{
+  "albums": [
+    {
+      "photo_count": "3",
+      "id": "10000000000000001",
+      "url": "https://www.flickr.com/photos/testuser/albums/10000000000000001",
+      "title": "Album One",
+      "description": "First album.",
+      "view_count": "1",
+      "created": "1517485941",
+      "last_updated": "1518767690",
+      "cover_photo": "https://www.flickr.com/photos/testuser/10000001",
+      "photos": ["10000001", "10000002", "10000003"]
+    },
+    {
+      "photo_count": "2",
+      "id": "10000000000000002",
+      "url": "https://www.flickr.com/photos/testuser/albums/10000000000000002",
+      "title": "Album Two",
+      "description": "",
+      "view_count": "0",
+      "created": "1600000000",
+      "last_updated": "1600000000",
+      "cover_photo": "",
+      "photos": ["10000004", "10000005"]
+    }
+  ]
+}

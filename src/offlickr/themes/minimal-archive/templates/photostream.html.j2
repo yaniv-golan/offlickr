@@ -1,0 +1,39 @@
+{% extends "base.html.j2" %}
+{% set active = 'photos' %}
+{% block title %}{{ account.screen_name }}'s Photos{% endblock %}
+{% block content %}
+<h1 class="page-title" dir="auto">{{ account.screen_name }}'s Photos</h1>
+{% if photos %}
+<div class="photostream-grid">
+  {% for photo in photos %}
+  {% if photo.media %}
+  {% set ratio = (photo.media.width / photo.media.height) if (photo.media.width and photo.media.height) else 1.0 %}
+  {% set tile_class = "grid-tile safety-blur" if (hide_unsafe and photo.safety != "safe") else "grid-tile" %}
+  <a href="{{ base_url }}photo/{{ photo.id }}.html" class="{{ tile_class }}"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}" loading="lazy">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+  </a>
+  {% elif include_missing_media %}
+  <a href="{{ base_url }}photo/{{ photo.id }}.html" class="grid-tile missing-media"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * 1.0)">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">No photos in this archive.</p>
+{% endif %}
+
+{% if pagination and pagination.total > 1 %}
+<nav class="pagination" aria-label="Page navigation">
+  {% if pagination.prev_url %}<a href="{{ pagination.prev_url }}" class="page-link">&larr; Previous</a>{% else %}<span class="page-link disabled">&larr; Previous</span>{% endif %}
+  <span class="page-current">Page {{ pagination.current }} of {{ pagination.total }}</span>
+  {% if pagination.next_url %}<a href="{{ pagination.next_url }}" class="page-link">Next &rarr;</a>{% else %}<span class="page-link disabled">Next &rarr;</span>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

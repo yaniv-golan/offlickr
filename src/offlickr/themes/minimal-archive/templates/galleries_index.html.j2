@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% set active = 'galleries' %}
+{% block title %}Galleries — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Galleries</h1>
+{% if galleries %}
+<ul class="collection-list">
+  {% for gallery in galleries %}
+  <li class="collection-item">
+    <a href="{{ base_url }}galleries/{{ gallery.id }}.html" class="collection-link">
+      <div class="collection-info">
+        <strong dir="auto">{{ gallery.title | e }}</strong>
+        <span class="collection-count">{{ gallery.photo_count | format_number }} photos</span>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">No galleries in this archive.</p>
+{% endif %}
+{% endblock %}

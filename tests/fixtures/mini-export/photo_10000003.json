@@ -1,0 +1,18 @@
+{
+  "id": "10000003",
+  "name": "Test photo 3",
+  "description": "",
+  "count_views": "0", "count_faves": "0", "count_comments": "0",
+  "date_taken": "2020-05-01 09:00:00",
+  "count_tags": "0", "count_notes": "0", "rotation": 0,
+  "date_imported": "2020-05-01 10:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000003/",
+  "original": "https://live.staticflickr.com/9999/10000003_cccccccccc_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [], "groups": [],
+  "albums": [{"id": "10000000000000001", "title": "Album One", "url": "https://www.flickr.com/photos/testuser/sets/10000000000000001/"}],
+  "tags": [], "people": [], "notes": [],
+  "privacy": "public",
+  "comment_permissions": "any flickr member", "tagging_permissions": "people you follow",
+  "safety": "moderate", "comments": []
+}

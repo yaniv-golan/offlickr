@@ -1,0 +1,14 @@
+[
+  {
+    "id": "fm002",
+    "from": "12345678@N00",
+    "to": "99999999@N00",
+    "to_username": "testuser",
+    "subject": "Re: Hi there",
+    "body": "<p>Doing great, thanks!</p>",
+    "date_sent": "2021-03-15 11:30:00",
+    "deleted": "",
+    "read": "1",
+    "replied": "1"
+  }
+]

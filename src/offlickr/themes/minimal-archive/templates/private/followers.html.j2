@@ -1,0 +1,15 @@
+{% extends "base.html.j2" %}
+{% block title %}Followers — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Followers</h1>
+<p class="private-notice">Private — only visible in archives built with <code>--include-private</code></p>
+{% if followers %}
+<ul class="user-list">
+  {% for nsid, user in followers.items() %}
+  <li><a href="{{ user.profile_url or ('https://www.flickr.com/photos/' ~ nsid ~ '/') }}"
+         rel="noopener noreferrer external" class="external-link">
+    {{ (user.screen_name or nsid) | e }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}<p class="empty-state">No followers.</p>{% endif %}
+{% endblock %}

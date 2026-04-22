@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.env.local
+
+# Test / type / coverage caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Flickr sample export (large) — not committed by default
+sample-data/
+
+# Generated output and caches
+/site/
+/.offlickr-cache/
+
+# Node (none today, but avoids accidents)
+node_modules/
+
+# Superpowers docs
+docs/superpowers/
+.playwright-mcp/
+.claude/settings.json
+
+# Local AI assistant notes
+CLAUDE.md

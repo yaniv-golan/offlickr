@@ -1,0 +1,22 @@
+{
+  "id": "10000009",
+  "name": "Test photo 9 (comments)",
+  "description": "",
+  "count_views": "5", "count_faves": "1", "count_comments": "3",
+  "date_taken": "2020-11-01 09:00:00",
+  "count_tags": "0", "count_notes": "0", "rotation": 0,
+  "date_imported": "2020-11-01 10:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000009/",
+  "original": "https://live.staticflickr.com/9999/10000009_iiiiiiiiii_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [], "groups": [], "albums": [],
+  "tags": [], "people": [], "notes": [],
+  "privacy": "public",
+  "comment_permissions": "any flickr member", "tagging_permissions": "people you follow",
+  "safety": "safe",
+  "comments": [
+    {"id": "c9a", "date": "2020-11-01 12:00:00", "user": "77777777@N00", "comment": "one", "url": "https://www.flickr.com/photos/testuser/10000009//#commentc9a"},
+    {"id": "c9b", "date": "2020-11-01 13:00:00", "user": "77777777@N00", "comment": "two", "url": "https://www.flickr.com/photos/testuser/10000009//#commentc9b"},
+    {"id": "c9c", "date": "2020-11-01 14:00:00", "user": "77777777@N00", "comment": "three", "url": "https://www.flickr.com/photos/testuser/10000009//#commentc9c"}
+  ]
+}

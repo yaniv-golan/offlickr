@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% set active = 'tags' %}
+{% block title %}Tags — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Tags</h1>
+{% if tag_entries %}
+<div class="tag-cloud">
+  {% for entry in tag_entries %}
+  <a href="{{ base_url }}tags/{{ entry.slug }}.html"
+     class="tag-cloud-item tag-size-{{ entry.bucket }}"
+     dir="auto">{{ entry.tag | e }}
+    <span class="tag-count">({{ entry.count | format_number }})</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">No tags in this archive.</p>
+{% endif %}
+{% endblock %}
