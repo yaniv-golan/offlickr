@@ -1,0 +1,39 @@
+{% extends "base.html.j2" %}
+{% set active = 'faves' %}
+{% block main_class %}main--wide{% endblock %}
+{% block title %}Faves — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title">Faves</h1>
+  {% if total_faves %}
+  <div class="page-title-counts"><span><strong>{{ total_faves | format_number }}</strong> faves</span></div>
+  {% endif %}
+</div>
+{% if faves %}
+<div class="photostream-grid">
+  {% for fave in faves %}
+  {% if fave.thumbnail_path %}
+  {% set ratio = (fave.thumbnail_width / fave.thumbnail_height) if (fave.thumbnail_width and fave.thumbnail_height) else 1.0 %}
+  <a href="{{ fave.photo_url_short }}" rel="noopener noreferrer external"
+     class="grid-tile" style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    <img src="{{ base_url }}{{ fave.thumbnail_path | e }}" alt="Favorited photo" loading="lazy">
+  </a>
+  {% else %}
+  <a href="{{ fave.photo_url_short }}" rel="noopener noreferrer external"
+     class="grid-tile fave-tombstone">
+    <span class="tombstone-label">Photo on Flickr ↗</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% if pagination and pagination.total > 1 %}
+<nav class="pagination" aria-label="Page navigation">
+  {% if pagination.prev_url %}<a href="{{ pagination.prev_url }}" class="page-link">&larr; Previous</a>{% else %}<span class="page-link disabled">&larr;</span>{% endif %}
+  <span class="page-current">Page {{ pagination.current }} of {{ pagination.total }}</span>
+  {% if pagination.next_url %}<a href="{{ pagination.next_url }}" class="page-link">Next &rarr;</a>{% else %}<span class="page-link disabled">&rarr;</span>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<p class="empty-state">No faves in this archive — your Flickr favorites weren't included in this export.</p>
+{% endif %}
+{% endblock %}

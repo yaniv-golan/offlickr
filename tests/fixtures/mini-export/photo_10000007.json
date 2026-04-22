@@ -1,0 +1,17 @@
+{
+  "id": "10000007",
+  "name": "Test photo 7",
+  "description": "",
+  "count_views": "0", "count_faves": "0", "count_comments": "0",
+  "date_taken": "2020-09-01 09:00:00",
+  "count_tags": "0", "count_notes": "0", "rotation": 0,
+  "date_imported": "2020-09-01 10:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000007/",
+  "original": "https://live.staticflickr.com/9999/10000007_gggggggggg_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [], "groups": [], "albums": [],
+  "tags": [], "people": [], "notes": [],
+  "privacy": "public",
+  "comment_permissions": "any flickr member", "tagging_permissions": "people you follow",
+  "safety": "moderate", "comments": []
+}

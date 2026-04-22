@@ -1,0 +1,50 @@
+{% extends "base.html.j2" %}
+{% from "_macros/flickr_attribution.html.j2" import view_on_flickr_album %}
+{% from "_macros/comments.html.j2" import comment_author_album %}
+{% set active = 'albums' %}
+{% block title %}{{ album.title }} — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title" dir="auto">{{ album.title | e }}</h1>
+{% if album.description_html %}
+<div class="album-description" dir="auto">{{ album.description_html | safe }}</div>
+{% endif %}
+<p class="album-meta">
+  {{ album.photo_count | format_number }} photos{{ view_on_flickr_album(album) }}
+</p>
+<div class="photostream-grid">
+  {% for photo in photos %}
+  {% if photo.media %}
+  {% set ratio = (photo.media.width / photo.media.height) if (photo.media.width and photo.media.height) else 1.0 %}
+  {% set unsafe = photo.safety and photo.safety != "safe" %}
+  <a href="{{ base_url }}{{ photo_href[photo.id] }}"
+     class="grid-tile{% if unsafe %} safety-veiled{% endif %}"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}" loading="lazy">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+    {% if unsafe %}
+    <div class="tombstone" role="button" aria-label="Click to reveal photo">
+      <span class="tombstone-date">{{ photo.date_taken | format_date }}</span>
+      <span class="tombstone-hint">click to view</span>
+    </div>
+    {% endif %}
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% if comments %}
+<section class="comments album-comments" aria-label="Comments">
+  <h2>Comments ({{ comments | length }})</h2>
+  {% for comment in comments %}
+  <article class="comment">
+    <header class="comment-header">
+      {{ comment_author_album(comment) }}
+      <time datetime="{{ comment.date.isoformat() }}">{{ comment.date | format_date }}</time>
+    </header>
+    <div class="comment-body" dir="auto">{{ comment.body_html | rewrite_urls(base_url) | safe }}</div>
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

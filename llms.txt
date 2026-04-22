@@ -1,0 +1,19 @@
+# offlickr
+
+> Converts a Flickr *Your Flickr Data* export into a self-contained static website — a browsable offline archive of your photostream, albums, galleries, and profile. Zero runtime dependencies, works from `file://`, USB stick, or any static host.
+
+offlickr is a Python CLI tool (requires Python 3.11+). Install with `pipx install offlickr` or `uv tool install offlickr`. The pipeline has three required stages (ingest → derive → render) and one optional stage (fetch-external). Run all stages with `offlickr build <flickr-export-dir> -o <output-dir>`.
+
+## Docs
+
+- [Getting started](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/docs/getting-started.md): Installation, quickstart, running stages individually, privacy flags, and what to keep for long-term archiving.
+- [CLI reference](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/docs/cli-reference.md): All commands and flags — `build`, `ingest`, `derive`, `fetch-external`, `render`, `inspect`, `serve`.
+- [Data model](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/docs/data-model.md): Schema for `model.json` (`OfflickrArchive` root, `Photo`, `Album`, `Gallery`, `User`, `Exif`, etc.).
+- [Themes](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/docs/themes.md): Theme structure, template layout, creating a custom theme.
+- [External fetching](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/docs/external-fetching.md): Fetching avatars and fave thumbnails from the Flickr API.
+
+## Optional
+
+- [README](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/README.md): Project overview, feature list, quickstart.
+- [CLAUDE.md](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/CLAUDE.md): Architecture, pipeline stages, conventions, and test/lint commands — for AI agents working inside the codebase.
+- [CONTRIBUTING.md](https://raw.githubusercontent.com/yaniv-golan/offlickr/main/CONTRIBUTING.md): TDD workflow, commit conventions, release process.

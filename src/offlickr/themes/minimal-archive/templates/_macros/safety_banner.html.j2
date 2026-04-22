@@ -1,0 +1,16 @@
+{#
+  safety_banner.html.j2 — Content-safety notice on photo detail pages.
+
+  Row 7: banner is shown in flickr-origin only (Flickr's safety taxonomy is only meaningful
+          when the archive is served from a Flickr-origin context).
+#}
+
+{% macro safety_banner(photo) -%}
+{% if flickr_origin and photo.safety and photo.safety != 'safe' %}
+<aside class="safety-notice" id="safety-notice">
+  <span>Marked {{ photo.safety | title }} on Flickr. This archive shows photos as-is.</span>
+  <button type="button" class="safety-notice-dismiss" aria-label="Dismiss"
+    onclick="this.closest('.safety-notice').hidden=true;sessionStorage.setItem('offlickr_safety_notice','1')">×</button>
+</aside>
+{% endif %}
+{%- endmacro %}

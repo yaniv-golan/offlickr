@@ -1,0 +1,19 @@
+{#
+  about_page.html.j2 — About page nav and back-link.
+
+  Row 8: the About page is rendered only in flickr-origin mode (pages.py gates
+          _render_about() on `if flickr_origin`).  Three callsites must all be
+          gated consistently:
+
+    1. base.html.j2 nav    → about_nav_link(active, base_url)  (nav <li> item)
+    2. testimonials.html.j2 → about_back_link(base_url)         (← About link at bottom)
+    3. pages.py            → `if flickr_origin: _render_about(...)` (guards the render call)
+#}
+
+{% macro about_nav_link(active, base_url) -%}
+{% if flickr_origin %}<li><a href="{{ base_url }}about.html"{% if active == 'about' %} aria-current="page"{% endif %}>About</a></li>{% endif %}
+{%- endmacro %}
+
+{% macro about_back_link(base_url) -%}
+{% if flickr_origin %}<p><a href="{{ base_url }}about.html">&larr; About</a></p>{% endif %}
+{%- endmacro %}

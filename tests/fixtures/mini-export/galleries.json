@@ -1,0 +1,12 @@
+{
+  "galleries": [
+    {
+      "id": "72157600000000000",
+      "title": "A Gallery",
+      "description": "Mixed-owner gallery.",
+      "photo_count": "2",
+      "view_count": "0",
+      "photos": ["10000001", "98765432"]
+    }
+  ]
+}

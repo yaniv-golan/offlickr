@@ -1,0 +1,32 @@
+{% extends "base.html.j2" %}
+{% set active = 'photos' %}
+{% block title %}Date Archive — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title">Date Archive</h1>
+  <div class="page-title-counts">
+    <span><strong>{{ year_index | length | format_number }}</strong> years</span>
+  </div>
+</div>
+
+{% if year_index %}
+<div class="archive-index">
+  {% for entry in year_index %}
+  <div class="archive-year-row">
+    <a class="archive-year-label" href="{{ base_url }}archive/{{ entry.year }}.html">{{ entry.year }}</a>
+    <div class="archive-year-strip" aria-label="{{ entry.year }} photo distribution by month">
+      {% for month in entry.months %}
+      <a class="sparkline-cell archive-month-cell"
+         data-density="{{ month.density }}"
+         href="{{ base_url }}archive/{{ entry.year }}.html#{{ month.anchor }}"
+         aria-label="{{ month.label }}: {{ month.count }} photo{{ 's' if month.count != 1 else '' }}"></a>
+      {% endfor %}
+    </div>
+    <span class="archive-year-total">{{ entry.total | format_number }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">No dated photos in this archive.</p>
+{% endif %}
+{% endblock %}

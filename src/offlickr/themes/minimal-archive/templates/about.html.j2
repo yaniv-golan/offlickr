@@ -1,0 +1,76 @@
+{% extends "base.html.j2" %}
+{% set active = 'about' %}
+{% block title %}About {{ account.screen_name }}{% endblock %}
+{% block content %}
+<section class="about-profile">
+  <span class="avatar-circle" aria-hidden="true">{{ account.screen_name[0] | upper }}</span>
+  <h1 dir="auto">{{ account.screen_name | e }}</h1>
+  {% if account.real_name %}<p class="about-realname">{{ account.real_name | e }}</p>{% endif %}
+  <p class="about-since">Member since {{ account.join_date | format_date }}</p>
+  {% if account.location %}
+  {% set _loc = [account.location.get('city', ''), account.location.get('country', '')] | select | list %}
+  {% if _loc %}
+  <p class="about-location">{{ _loc | join(', ') | e }}</p>
+  {% endif %}
+  {% endif %}
+  {% if account.website_url | safe_url %}
+  <p><a href="{{ account.website_url | safe_url | e }}" rel="noopener noreferrer external" class="external-link">{{ account.website_url | e }}</a></p>
+  {% endif %}
+  {% if account.social %}
+  <ul class="about-social">
+    {% if account.social.get('instagram') %}
+    <li><a href="https://www.instagram.com/{{ account.social['instagram'] | e }}" rel="noopener noreferrer external">Instagram</a></li>
+    {% endif %}
+    {% if account.social.get('twitter') %}
+    <li><a href="https://twitter.com/{{ account.social['twitter'] | e }}" rel="noopener noreferrer external">Twitter</a></li>
+    {% endif %}
+    {% if account.social.get('facebook') and account.social['facebook'] | safe_url %}
+    <li><a href="{{ account.social['facebook'] | safe_url | e }}" rel="noopener noreferrer external">Facebook</a></li>
+    {% endif %}
+    {% if account.social.get('tumblr') and account.social['tumblr'] | safe_url %}
+    <li><a href="{{ account.social['tumblr'] | safe_url | e }}" rel="noopener noreferrer external">Tumblr</a></li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</section>
+{% if account.description_html %}
+<section class="about-bio" dir="auto">
+  {{ account.description_html | rewrite_urls(base_url) | safe }}
+</section>
+{% endif %}
+{% if showcase_photos %}
+<section class="about-showcase">
+  <div class="photostream-grid showcase-grid">
+    {% for photo in showcase_photos %}
+    {% set ratio = (photo.media.width / photo.media.height) if (photo.media.width and photo.media.height) else 1.0 %}
+    <a href="{{ base_url }}{{ photo_href[photo.id] }}" class="grid-tile"
+       title="{{ photo.title }}"
+       style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+      <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+           alt="{{ photo.title | e }}" loading="lazy">
+      <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+<section class="about-stats">
+  <h2>Archive</h2>
+  <dl class="stats-grid">
+    {% for key, val in archive_counts.items() %}
+    <dt>{{ key }}</dt><dd>{{ val | format_number }}</dd>
+    {% endfor %}
+  </dl>
+  {% if account.stats and account.stats.view_counts %}
+  <h2 style="margin-top:1rem">Page views</h2>
+  <dl class="stats-grid">
+    {% for key, val in account.stats.view_counts.items() %}
+    <dt>{{ key | replace('_', ' ') | title }}</dt><dd>{{ val | format_number }}</dd>
+    {% endfor %}
+  </dl>
+  {% endif %}
+</section>
+{% if has_testimonials %}
+<p><a href="{{ base_url }}testimonials.html">View testimonials</a></p>
+{% endif %}
+{% endblock %}

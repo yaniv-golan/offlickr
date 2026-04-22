@@ -1,0 +1,19 @@
+{#
+  groups.html.j2 — Groups section on photo detail pages.
+
+  Row 2: "In groups" section is shown in flickr-origin only (group URLs are Flickr-hosted
+          and have no meaningful standalone equivalent).
+#}
+
+{% macro groups_section(photo) -%}
+{% if flickr_origin and photo.groups %}
+<div class="photo-ref-section photo-in-groups">
+  <h3>In groups</h3>
+  <ul>
+    {% for grp in photo.groups %}
+    <li><a href="{{ grp.url_flickr | e }}" rel="noopener noreferrer external">{{ grp.name | e }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{%- endmacro %}

@@ -1,0 +1,40 @@
+{#
+  comments.html.j2 — Comment author rendering across photo and album pages.
+
+  Row 4 (photo comments): author is a link to their profile in flickr-origin, OR when
+    the profile URL is non-Flickr (e.g., external).  Falls back to a plain <span> when
+    the URL points to flickr.com and the archive is standalone.
+
+  Row 5 (album comments): same logic, but the URL is always the nsid-derived Flickr profile
+    URL, so it is always a <span> in standalone mode.
+
+  _author_link is a private helper; import comment_author_photo / comment_author_album.
+
+  base_url in comment_author_photo is a per-page render variable (depth-relative path),
+  NOT a Jinja2 global.  It is used to build the avatar <img> src and must be passed explicitly.
+#}
+
+{% macro _author_link(name, url) -%}
+{%- if flickr_origin or not (url | is_flickr_url) -%}
+<a href="{{ url | e }}" rel="noopener noreferrer external" class="comment-author">{{ name | e }}</a>
+{%- else -%}
+<span class="comment-author">{{ name | e }}</span>
+{%- endif %}
+{%- endmacro %}
+
+{% macro comment_author_photo(comment, users, base_url) -%}
+{%- set _author = users.get(comment.user_nsid) -%}
+{%- set _name = (_author.screen_name if _author and _author.screen_name else comment.user_nsid) -%}
+{%- set _url = (_author.profile_url if _author and _author.profile_url else "https://www.flickr.com/people/" ~ comment.user_nsid ~ "/") -%}
+{% if _author and _author.avatar_path -%}
+<img src="{{ base_url }}{{ _author.avatar_path | e }}" alt="{{ _name | e }}" class="avatar-img">
+{% else -%}
+<span class="avatar-circle" aria-hidden="true">{{ _name[0] | upper }}</span>
+{% endif -%}
+{{ _author_link(_name, _url) }}
+{%- endmacro %}
+
+{% macro comment_author_album(comment) -%}
+{%- set _url = "https://www.flickr.com/people/" ~ comment.user_nsid ~ "/" -%}
+{{ _author_link(comment.user_nsid, _url) }}
+{%- endmacro %}

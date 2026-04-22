@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block title %}My Comments — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Comments I Wrote</h1>
+<p class="private-notice">Private — comments you left on other people's photos</p>
+{% if comments %}
+<ol class="comment-log">
+  {% for c in comments %}
+  <li class="comment-log-item">
+    <header>
+      <a href="{{ c.photo_url }}" rel="noopener noreferrer external" class="external-link">Photo on Flickr</a>
+      <time>{{ c.date | format_date }}</time>
+    </header>
+    <div class="comment-body" dir="auto">{{ c.body_html | safe }}</div>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}<p class="empty-state">No outgoing comments.</p>{% endif %}
+{% endblock %}
