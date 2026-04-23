@@ -16,10 +16,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.13"
       - run: uv sync --all-extras --dev
@@ -43,10 +43,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0  # diff-cover needs main's history
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python }}
       - run: uv sync --all-extras --dev
@@ -56,7 +56,7 @@ jobs:
         run: |
           git fetch origin ${{ github.event.pull_request.base.ref }}
           uv run diff-cover coverage.xml --compare-branch=origin/${{ github.event.pull_request.base.ref }} --fail-under=80
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v6
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
         with:
           use_oidc: true
@@ -67,8 +67,8 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.13"
       - run: uv build
@@ -78,7 +78,7 @@ jobs:
           uv build
           mv dist dist-2
           diff -r dist-1 dist-2
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist-1/
@@ -88,8 +88,8 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true  # advisory in v1 per spec §13.2
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.13"
       - run: uv sync --all-extras --dev
@@ -99,8 +99,8 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
       - run: npx -y markdownlint-cli2 "**/*.md" "#node_modules"

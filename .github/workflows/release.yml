@@ -20,7 +20,7 @@ jobs:
       prerelease: ${{ steps.vars.outputs.prerelease }}
       notes_file: ${{ steps.vars.outputs.notes_file }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - id: vars
         run: |
           TAG="${GITHUB_REF_NAME}"
@@ -59,15 +59,15 @@ jobs:
     needs: preflight
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.13"
       - run: uv build
       - name: Generate SBOM
         run: |
           uv run --with cyclonedx-bom python -m cyclonedx_py environment -o sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: |
@@ -80,7 +80,7 @@ jobs:
       id-token: write
       contents: read
       actions: read
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
     with:
       base64-subjects: ${{ needs.build.outputs.hashes }}
       upload-assets: true
@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: pypi  # configure Trusted Publishing in this environment
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: .
@@ -102,8 +102,8 @@ jobs:
     needs: [preflight, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist/
