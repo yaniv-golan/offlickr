@@ -44,7 +44,12 @@ def run_fetch_external(
             for fave in model.get("faves", []):
                 pid = fave["photo_id"]
                 if pid in thumb_map:
-                    fave["thumbnail_path"] = thumb_map[pid]
+                    path, w, h = thumb_map[pid]
+                    fave["thumbnail_path"] = path
+                    if w:
+                        fave["thumbnail_width"] = w
+                    if h:
+                        fave["thumbnail_height"] = h
 
         if include_avatars:
             nsids = list(model.get("users", {}).keys())

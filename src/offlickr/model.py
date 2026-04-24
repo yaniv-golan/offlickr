@@ -354,6 +354,8 @@ class Fave(BaseModel):
     photo_url_flickr: str | None = None
     owner_nsid: str | None = None
     thumbnail_path: str | None = None
+    thumbnail_width: int | None = None
+    thumbnail_height: int | None = None
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> Fave:

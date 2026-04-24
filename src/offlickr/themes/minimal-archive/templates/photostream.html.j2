@@ -1,5 +1,6 @@
 {% extends "base.html.j2" %}
 {% set active = 'photos' %}
+{% block main_class %}main--wide{% endblock %}
 {% block title %}{{ account.screen_name }}'s Photos{% endblock %}
 {% block content %}
 <h1 class="page-title" dir="auto">{{ account.screen_name }}'s Photos</h1>

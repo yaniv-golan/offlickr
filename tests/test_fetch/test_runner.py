@@ -34,7 +34,8 @@ def test_run_fetch_external_updates_thumbnail_path(tmp_path: Path) -> None:
     respx.get(_REST_RE).mock(side_effect=[
         httpx.Response(200, json={
             "stat": "ok",
-            "sizes": {"size": [{"label": "Large Square", "source": _THUMB_URL}]},
+            "sizes": {"size": [{"label": "Small 320", "source": _THUMB_URL,
+                                "width": "320", "height": "213"}]},
         }),
         httpx.Response(200, json={
             "stat": "ok",
@@ -49,6 +50,8 @@ def test_run_fetch_external_updates_thumbnail_path(tmp_path: Path) -> None:
 
     model = json.loads((output_dir / "data" / "model.json").read_text())
     assert model["faves"][0]["thumbnail_path"] == "fave-thumbs/98765432.jpg"
+    assert model["faves"][0]["thumbnail_width"] == 320
+    assert model["faves"][0]["thumbnail_height"] == 213
     assert model["users"]["99@N00"]["avatar_path"] == "avatars/99@N00.jpg"
     assert model["users"]["99@N00"]["screen_name"] == "flickruser"
 

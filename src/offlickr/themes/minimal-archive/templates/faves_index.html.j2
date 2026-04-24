@@ -1,5 +1,6 @@
 {% extends "base.html.j2" %}
 {% set active = 'faves' %}
+{% block main_class %}main--wide{% endblock %}
 {% block title %}Favorites — {{ account.screen_name }}{% endblock %}
 {% block content %}
 <h1 class="page-title">Favorites</h1>
@@ -7,8 +8,9 @@
 <div class="photostream-grid">
   {% for fave in faves %}
   {% if fave.thumbnail_path %}
+  {% set ratio = (fave.thumbnail_width / fave.thumbnail_height) if (fave.thumbnail_width and fave.thumbnail_height) else 1.0 %}
   <a href="{{ fave.photo_url_short }}" rel="noopener noreferrer external"
-     class="grid-tile" style="flex-basis:var(--thumb-h)">
+     class="grid-tile" style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
     <img src="{{ base_url }}{{ fave.thumbnail_path | e }}" alt="Favorited photo" loading="lazy">
   </a>
   {% else %}
