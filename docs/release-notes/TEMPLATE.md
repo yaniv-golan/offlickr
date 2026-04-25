@@ -1,8 +1,3 @@
----
-name: "<short release name>"
-date: "YYYY-MM-DD"
----
-
 # offlickr v<X.Y.Z>
 
 **TL;DR:** one sentence summary of the most important change in this release.
