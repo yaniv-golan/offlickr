@@ -13,9 +13,8 @@ from pathlib import Path
 import pytest
 from bs4 import BeautifulSoup
 
-from offlickr.render.filters import is_flickr_url
-
 from offlickr.ingest.pipeline import run_ingest
+from offlickr.render.filters import is_flickr_url
 from offlickr.model import OfflickrArchive
 from offlickr.render.pages import build_photo_urls, render_site
 from tests.conftest import MINI_EXPORT
