@@ -180,7 +180,7 @@ def test_photo_detail_comment_author_linked_in_flickr_origin(
     soup = _parse(built_site_flickr_origin / _href["10000001"])
     author_links = soup.select("a.comment-author[href]")
     assert len(author_links) >= 1
-    assert is_flickr_url(author_links[0]["href"])
+    assert is_flickr_url(str(author_links[0]["href"]))
 
 
 def test_photostream_veils_unsafe_tiles_by_default(tmp_path: Path) -> None:
