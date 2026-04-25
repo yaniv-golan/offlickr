@@ -13,6 +13,8 @@ from pathlib import Path
 import pytest
 from bs4 import BeautifulSoup
 
+from offlickr.render.filters import is_flickr_url
+
 from offlickr.ingest.pipeline import run_ingest
 from offlickr.model import OfflickrArchive
 from offlickr.render.pages import build_photo_urls, render_site
@@ -35,7 +37,6 @@ def _fo_href(built_site_flickr_origin: Path) -> dict[str, str]:
 _TEMPLATES = (
     Path(__file__).parents[2] / "src" / "offlickr" / "themes" / "minimal-archive" / "templates"
 )
-_MACROS = _TEMPLATES / "_macros"
 _PAGES_PY = Path(__file__).parents[2] / "src" / "offlickr" / "render" / "pages.py"
 
 
@@ -132,7 +133,7 @@ def test_row_04_photo_comment_author_link_flickr_origin(built_site_flickr_origin
     soup = _parse(built_site_flickr_origin / href["10000001"])
     author_links = soup.select("a.comment-author")
     assert len(author_links) >= 1
-    assert "flickr.com" in str(author_links[0].get("href", ""))
+    assert is_flickr_url(str(author_links[0].get("href", "")))
 
 
 def test_row_04_photo_comment_author_span_standalone(
@@ -247,7 +248,7 @@ def test_row_09_handle_link_flickr_origin(built_site_flickr_origin: Path) -> Non
     handle = soup.select_one(".nav-handle")
     assert handle is not None
     assert handle.name == "a"
-    assert "flickr.com" in str(handle.get("href", ""))
+    assert is_flickr_url(str(handle.get("href", "")))
 
 
 def test_row_09_handle_span_standalone(built_site: Path) -> None:

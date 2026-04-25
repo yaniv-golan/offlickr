@@ -180,7 +180,7 @@ def test_photo_detail_comment_author_linked_in_flickr_origin(
     soup = _parse(built_site_flickr_origin / _href["10000001"])
     author_links = soup.select("a.comment-author[href]")
     assert len(author_links) >= 1
-    assert "flickr.com" in author_links[0]["href"]
+    assert is_flickr_url(author_links[0]["href"])
 
 
 def test_photostream_veils_unsafe_tiles_by_default(tmp_path: Path) -> None:
@@ -1085,7 +1085,7 @@ def test_fo_comment_author_linked_in_flickr_origin(built_site_flickr_origin: Pat
     soup = _parse(built_site_flickr_origin / _href["10000001"])
     author_links = soup.select("a.comment-author")
     assert len(author_links) >= 1
-    assert "flickr.com" in str(author_links[0].get("href", ""))
+    assert is_flickr_url(str(author_links[0].get("href", "")))
 
 
 def test_fo_comment_author_text_standalone(built_site: Path, photo_href: dict[str, str]) -> None:
@@ -1100,7 +1100,7 @@ def test_fo_handle_linked_in_flickr_origin(built_site_flickr_origin: Path) -> No
     handle = soup.select_one(".nav-handle")
     assert handle is not None
     assert handle.name == "a"
-    assert "flickr.com" in str(handle.get("href", ""))
+    assert is_flickr_url(str(handle.get("href", "")))
 
 
 def test_fo_handle_span_in_standalone(built_site: Path) -> None:
@@ -1151,7 +1151,7 @@ def test_fo_canonical_in_photo_page(built_site_flickr_origin: Path) -> None:
     soup = _parse(built_site_flickr_origin / _href["10000001"])
     canonical = soup.find("link", rel="canonical")
     assert canonical is not None
-    assert "flickr.com" in str(canonical.get("href", ""))
+    assert is_flickr_url(str(canonical.get("href", "")))
 
 
 def test_fo_no_canonical_in_standalone(built_site: Path, photo_href: dict[str, str]) -> None:
