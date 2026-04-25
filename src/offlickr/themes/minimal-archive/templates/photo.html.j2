@@ -1,0 +1,264 @@
+{% extends "base.html.j2" %}
+{% from "_macros/safety_banner.html.j2" import safety_banner %}
+{% from "_macros/people_tags.html.j2" import person_tag %}
+{% from "_macros/groups.html.j2" import groups_section %}
+{% from "_macros/comments.html.j2" import comment_author_photo %}
+{% from "_macros/engagement.html.j2" import engagement %}
+{% from "_macros/flickr_attribution.html.j2" import sidecar_links %}
+{% set active = 'photos' %}
+{% block title %}{{ photo.title | photo_title }} — {{ account.screen_name }}{% endblock %}
+
+{% block photo_hero %}
+{% if photo.media %}
+<div class="photo-hero">
+  {% if photo.media.kind == 'image' %}
+  <figure class="photo-figure">
+    <img src="{{ base_url }}display/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}"
+         class="photo-display"
+         {% if photo.media.width and photo.media.height %}
+         width="{{ photo.media.width }}" height="{{ photo.media.height }}"
+         {% endif %}>
+    {% if display_notes and photo.media.width and photo.media.height %}
+    <div class="notes-layer" aria-hidden="true">
+      {% for note in display_notes %}
+      <div class="note-overlay"
+           title="{{ note.body | e }}"
+           style="left:{{ '%.3f' | format(note.x * 100.0 / photo.media.width) }}%;top:{{ '%.3f' | format(note.y * 100.0 / photo.media.height) }}%;width:{{ '%.3f' | format(note.w * 100.0 / photo.media.width) }}%;height:{{ '%.3f' | format(note.h * 100.0 / photo.media.height) }}%"></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </figure>
+  {% elif photo.media.kind == 'video' %}
+  <figure class="photo-figure">
+    <video controls class="photo-display" preload="metadata">
+      <source src="{{ base_url }}originals/{{ photo.id }}{{ photo.media.ext }}">
+      <a href="{{ base_url }}originals/{{ photo.id }}{{ photo.media.ext }}">Download video</a>
+    </video>
+  </figure>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{{ safety_banner(photo) }}
+<article class="photo-detail">
+  <div class="photo-title-row">
+    <h1 dir="auto">{{ photo.title | photo_title | e }}</h1>
+    {% if photo.date_taken %}
+    <time class="photo-taken-stamp" datetime="{{ photo.date_taken.isoformat() }}">
+      <a href="{{ base_url }}archive/{{ photo.date_taken.year }}.html#d-{{ '%02d%02d' | format(photo.date_taken.month, photo.date_taken.day) }}">{{ photo.date_taken.day }}</a>
+      <a href="{{ base_url }}archive/{{ photo.date_taken.year }}.html#m-{{ '%02d' | format(photo.date_taken.month) }}">{{ photo.date_taken | month_name }}</a>
+      <a href="{{ base_url }}archive/{{ photo.date_taken.year }}.html">{{ photo.date_taken.year }}</a>
+    </time>
+    {% endif %}
+  </div>
+
+  <div class="photo-body">
+    {# ── Main column ──────────────────────────────────────────────────────── #}
+    <div class="photo-main">
+      {% if photo.description_html %}
+      <div class="photo-description" dir="auto">{{ photo.description_html | rewrite_urls(base_url) | safe }}</div>
+      {% endif %}
+
+      {% if photo.tags %}
+      <ul class="photo-tags" aria-label="Tags">
+        {% for tag in photo.tags %}
+        <li><a href="{{ base_url }}tags/{{ tag_slug_map[tag.tag] }}.html">{{ tag.tag | e }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      {% if photo.people %}
+      <div class="photo-ref-section photo-people">
+        <h3>People</h3>
+        <ul>
+          {% for person in photo.people %}
+          <li>{{ person_tag(person) }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if photo.album_refs %}
+      <div class="photo-ref-section photo-in-albums">
+        <h3>In albums</h3>
+        <ul>
+          {% for ref in photo.album_refs %}
+          <li><a href="{{ base_url }}albums/{{ ref.id }}.html">{{ ref.title | e }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if gallery_refs %}
+      <div class="photo-ref-section photo-in-galleries">
+        <h3>In galleries</h3>
+        <ul>
+          {% for g in gallery_refs %}
+          <li><a href="{{ base_url }}galleries/{{ g.id }}.html">{{ g.title | e }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {{ groups_section(photo) }}
+
+      {% if photo.comments %}
+      <section class="comments" aria-label="Comments">
+        <h2 class="comments-heading">Comments <span class="comments-count">· {{ photo.comments | length | format_number }}</span></h2>
+        {% for comment in photo.comments %}
+        <article class="comment">
+          <header class="comment-header">
+            {{ comment_author_photo(comment, users, base_url) }}
+            <time class="comment-date" datetime="{{ comment.date.isoformat() }}">{{ comment.date | format_date }}</time>
+          </header>
+          <div class="comment-body" dir="auto">{{ comment.body_html | rewrite_urls(base_url) | safe }}</div>
+        </article>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </div>
+
+    {# ── Sidecar ──────────────────────────────────────────────────────────── #}
+    <aside class="photo-sidecar">
+      {{ engagement(photo) }}
+
+      {% if photo.exif or (photo.media and (photo.media.width or photo.media.bytes)) %}
+      <div class="exif-sidecar">
+        {# Level 1: always-visible summary #}
+        {% if photo.exif.camera_make or photo.exif.camera_model %}
+        <p class="exif-camera">{{ photo.exif.camera_make | format_camera(photo.exif.camera_model) | e }}</p>
+        {% endif %}
+        {% if photo.exif.lens_model %}
+        <p class="exif-lens">{{ photo.exif.lens_model | e }}</p>
+        {% endif %}
+        {% if photo.exif.aperture or photo.exif.shutter_speed or photo.exif.iso or photo.exif.focal_length_mm %}
+        <p class="exif-exposure">
+          {%- set _ns = namespace(sep=false) -%}
+          {%- if photo.exif.aperture %}{% if _ns.sep %}<span class="exif-sep">·</span>{% endif %}f/{{ photo.exif.aperture }}{%- set _ns.sep = true -%}{% endif -%}
+          {%- if photo.exif.shutter_speed %}{% if _ns.sep %}<span class="exif-sep">·</span>{% endif %}{{ photo.exif.shutter_speed | e }}{%- set _ns.sep = true -%}{% endif -%}
+          {%- if photo.exif.iso %}{% if _ns.sep %}<span class="exif-sep">·</span>{% endif %}ISO {{ photo.exif.iso }}{%- set _ns.sep = true -%}{% endif -%}
+          {%- if photo.exif.focal_length_mm %}{% if _ns.sep %}<span class="exif-sep">·</span>{% endif %}{{ photo.exif.focal_length_mm | format_focal_mm }}{%- set _ns.sep = true -%}{% endif -%}
+        </p>
+        {% endif %}
+
+        {# Level 2: curated technical groups #}
+        {% set _has_exposure = photo.exif.exposure_mode or photo.exif.flash or photo.exif.metering_mode or photo.exif.white_balance %}
+        {% set _has_image = (photo.media and (photo.media.width or photo.media.bytes)) or photo.exif.color_space or photo.exif.orientation %}
+        {% set _has_software = photo.exif.software %}
+        {% set _has_pii = include_exif_pii and (photo.exif.artist or photo.exif.copyright_notice) %}
+        {% if _has_exposure or _has_image or _has_software or _has_pii or photo.exif.raw_fields %}
+        <details class="exif-details">
+          <summary>Technical details</summary>
+          {% if _has_exposure %}
+          <div class="exif-group">
+            <h5>Exposure</h5>
+            <dl>
+              {% if photo.exif.exposure_mode %}<dt>Mode</dt><dd>{{ photo.exif.exposure_mode | e }}</dd>{% endif %}
+              {% if photo.exif.flash %}<dt>Flash</dt><dd>{{ photo.exif.flash | e }}</dd>{% endif %}
+              {% if photo.exif.metering_mode %}<dt>Metering</dt><dd>{{ photo.exif.metering_mode | e }}</dd>{% endif %}
+              {% if photo.exif.white_balance %}<dt>White balance</dt><dd>{{ photo.exif.white_balance | e }}</dd>{% endif %}
+            </dl>
+          </div>
+          {% endif %}
+          {% if _has_image %}
+          <div class="exif-group">
+            <h5>Image</h5>
+            <dl>
+              {% if photo.media and photo.media.width and photo.media.height %}
+              <dt>Dimensions</dt><dd>{{ photo.media.width }} × {{ photo.media.height }}</dd>
+              <dt>Megapixels</dt><dd>{{ photo.media.width | format_megapixels(photo.media.height) }}</dd>
+              <dt>Aspect ratio</dt><dd>{{ photo.media.width | format_aspect(photo.media.height) }}</dd>
+              {% endif %}
+              {% if photo.media and photo.media.ext %}<dt>Format</dt><dd>{{ photo.media.ext | format_media_type }}</dd>{% endif %}
+              {% if photo.media and photo.media.bytes %}<dt>File size</dt><dd>{{ photo.media.bytes | format_filesize }}</dd>{% endif %}
+              {% if photo.exif %}
+              {% if photo.exif.color_space %}<dt>Colour space</dt><dd>{{ photo.exif.color_space | e }}</dd>{% endif %}
+              {% if photo.exif.orientation %}<dt>Orientation</dt><dd>{{ photo.exif.orientation | e }}</dd>{% endif %}
+              {% endif %}
+            </dl>
+          </div>
+          {% endif %}
+          {% if _has_software %}
+          <div class="exif-group">
+            <h5>Software</h5>
+            <dl>
+              {%- set _sv = photo.exif.software | e -%}
+              {%- set _sw = _sv | length > 24 -%}
+              <dt{% if _sw %} class="exif-wide"{% endif %}>Processed in</dt>
+              <dd{% if _sw %} class="exif-wide"{% endif %}>{{ _sv }}</dd>
+            </dl>
+          </div>
+          {% endif %}
+          {% if _has_pii %}
+          <div class="exif-group">
+            <h5>Attribution</h5>
+            <dl>
+              {% if photo.exif.artist %}
+              {%- set _av = photo.exif.artist | e -%}
+              {%- set _aw = _av | length > 24 -%}
+              <dt{% if _aw %} class="exif-wide"{% endif %}>Artist</dt>
+              <dd{% if _aw %} class="exif-wide"{% endif %}>{{ _av }}</dd>
+              {% endif %}
+              {% if photo.exif.copyright_notice %}
+              {%- set _cv = photo.exif.copyright_notice | e -%}
+              {%- set _cw = _cv | length > 24 -%}
+              <dt{% if _cw %} class="exif-wide"{% endif %}>Copyright</dt>
+              <dd{% if _cw %} class="exif-wide"{% endif %}>{{ _cv }}</dd>
+              {% endif %}
+            </dl>
+          </div>
+          {% endif %}
+          {# Level 3: raw field dump #}
+          {% if photo.exif.raw_fields %}
+          <details class="exif-raw-details">
+            <summary>All EXIF fields ({{ photo.exif.raw_fields | length }})</summary>
+            <dl class="exif-raw">
+              {% for k, v in photo.exif.raw_fields.items() %}
+              <dt>{{ k | e }}</dt><dd>{{ v | e }}</dd>
+              {% endfor %}
+            </dl>
+          </details>
+          {% endif %}
+        </details>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if photo.license %}
+      <div>
+        <div class="provenance">LICENSE</div>
+        {{ photo.license | e }}
+      </div>
+      {% endif %}
+      <div>
+        <div class="provenance">IMPORTED</div>
+        <time datetime="{{ photo.date_imported.isoformat() }}">{{ photo.date_imported | date_short }}</time>
+      </div>
+
+      {% if photo.geo %}
+      <div class="sidecar-geo">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ '%.4f' | format(photo.geo.lat) }}°, {{ '%.4f' | format(photo.geo.lng) }}°
+        {% if has_map %}<a href="{{ base_url }}map.html"> (map)</a>{% endif %}
+      </div>
+      {% if world_svg_content %}
+      <figure class="geo-inset" aria-label="Photo location on world map">
+        {{ world_svg_content | add_geo_pin(photo.geo.lat, photo.geo.lng) | safe }}
+      </figure>
+      {% endif %}
+      {% endif %}
+
+      {{ sidecar_links(photo, base_url) }}
+    </aside>
+  </div>
+
+  <nav class="photo-nav" aria-label="Photo navigation">
+    <div>{% if prev_photo %}<a href="{{ base_url }}{{ photo_href[prev_photo.id] }}"><span class="nav-arrow">&larr;</span> {{ prev_photo.title | photo_title | e }}</a>{% endif %}</div>
+    <a href="{{ base_url }}index.html">All Photos</a>
+    <div>{% if next_photo %}<a href="{{ base_url }}{{ photo_href[next_photo.id] }}">{{ next_photo.title | photo_title | e }} <span class="nav-arrow">&rarr;</span></a>{% endif %}</div>
+  </nav>
+</article>
+{% endblock %}

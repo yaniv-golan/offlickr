@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% block title %}My Group Posts — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">My Group Posts</h1>
+<p class="private-notice">Private</p>
+{% if posts %}
+<ol class="comment-log">
+  {% for p in posts %}
+  <li class="comment-log-item">
+    <header>
+      <strong>{{ p.group_name | e }}</strong> &mdash; {{ p.topic_title | e }}
+      <time>{{ p.date | format_date }}</time>
+    </header>
+    <div class="comment-body" dir="auto">{{ p.body_html | safe }}</div>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}<p class="empty-state">No group posts.</p>{% endif %}
+{% endblock %}

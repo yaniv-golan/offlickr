@@ -1,0 +1,53 @@
+{% extends "base.html.j2" %}
+{% set active = 'photos' %}
+{% block main_class %}main--wide{% endblock %}
+{% block title %}{{ account.screen_name }}'s Photos{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title" dir="auto">Photostream <em>— everything, newest first</em></h1>
+  <div class="page-title-counts">
+    {%- if scope_total_photos %}<span><strong>{{ scope_total_photos | format_number }}</strong> photos</span>{% endif -%}
+    {%- if scope_year_from and scope_year_to %}<span><strong>{{ scope_year_from }}</strong>{% if scope_year_to != scope_year_from %}–<strong>{{ scope_year_to }}</strong>{% endif %}</span>{% endif -%}
+  </div>
+</div>
+{% if photos %}
+<div class="photostream-grid">
+  {% for photo in photos %}
+  {% if photo.media %}
+  {% set ratio = (photo.media.width / photo.media.height) if (photo.media.width and photo.media.height) else 1.0 %}
+  {% set unsafe = photo.safety and photo.safety != "safe" %}
+  <a href="{{ base_url }}{{ photo_href[photo.id] }}"
+     class="grid-tile{% if unsafe %} safety-veiled{% endif %}"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}" loading="lazy">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+    {% if unsafe %}
+    <div class="tombstone" role="button" aria-label="Click to reveal photo">
+      <span class="tombstone-date">{{ photo.date_taken | format_date }}</span>
+      <span class="tombstone-hint">click to view</span>
+    </div>
+    {% endif %}
+  </a>
+  {% elif include_missing_media %}
+  <a href="{{ base_url }}{{ photo_href[photo.id] }}" class="grid-tile missing-media"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * 1.0)">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">No photos in this archive.</p>
+{% endif %}
+
+{% if pagination and pagination.total > 1 %}
+<nav class="pagination" aria-label="Page navigation">
+  {% if pagination.prev_url %}<a href="{{ pagination.prev_url }}" class="page-link">&larr; Previous</a>{% else %}<span class="page-link disabled">&larr; Previous</span>{% endif %}
+  <span class="page-current">Page {{ pagination.current }} of {{ pagination.total }}</span>
+  {% if pagination.next_url %}<a href="{{ pagination.next_url }}" class="page-link">Next &rarr;</a>{% else %}<span class="page-link disabled">Next &rarr;</span>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

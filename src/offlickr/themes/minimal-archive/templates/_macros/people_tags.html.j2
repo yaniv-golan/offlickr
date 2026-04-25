@@ -1,0 +1,14 @@
+{#
+  people_tags.html.j2 — People tagged in a photo.
+
+  Row 3: person's username is a link to their Flickr profile in flickr-origin;
+          plain text in standalone.
+#}
+
+{% macro person_tag(person) -%}
+{%- if flickr_origin -%}
+<a href="{{ person.profile_url | e }}" rel="noopener noreferrer external">{{ person.username | e }}</a>
+{%- else -%}
+{{ person.username | e }}
+{%- endif %}
+{%- endmacro %}

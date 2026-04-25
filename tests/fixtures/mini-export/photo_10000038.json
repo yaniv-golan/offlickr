@@ -1,0 +1,33 @@
+{
+  "id": "10000038",
+  "name": "Earth Day 01",
+  "description": "",
+  "count_views": "0",
+  "count_faves": "0",
+  "count_comments": "0",
+  "count_tags": "0",
+  "count_notes": "0",
+  "rotation": 0,
+  "date_imported": "2022-04-22 10:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000038/",
+  "original": "https://live.staticflickr.com/9999/10000038_xxxxxxxxxx_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [],
+  "groups": [],
+  "albums": [
+    {
+      "id": "10000000000000003",
+      "title": "Album Three",
+      "url": "https://www.flickr.com/photos/testuser/sets/10000000000000003/"
+    }
+  ],
+  "tags": [],
+  "people": [],
+  "notes": [],
+  "privacy": "public",
+  "comment_permissions": "any flickr member",
+  "tagging_permissions": "people you follow",
+  "safety": "safe",
+  "comments": [],
+  "date_taken": "2022-04-22 09:00:00"
+}

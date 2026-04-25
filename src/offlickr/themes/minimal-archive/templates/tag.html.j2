@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% set active = 'tags' %}
+{% block title %}{{ tag }} — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title" dir="auto">{{ tag | e }}</h1>
+<p class="tag-photo-count">{{ photos | length | format_number }} photos</p>
+<div class="photostream-grid">
+  {% for photo in photos %}
+  {% if photo.media %}
+  {% set ratio = (photo.media.width / photo.media.height) if (photo.media.width and photo.media.height) else 1.0 %}
+  <a href="{{ base_url }}{{ photo_href[photo.id] }}" class="grid-tile"
+     title="{{ photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+         alt="{{ photo.title | e }}" loading="lazy">
+    <span class="tile-caption" dir="auto">{{ photo.title | e }}</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+<p><a href="{{ base_url }}tags/index.html">&larr; All tags</a></p>
+{% endblock %}

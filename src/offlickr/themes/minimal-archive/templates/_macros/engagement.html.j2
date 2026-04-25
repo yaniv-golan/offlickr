@@ -1,0 +1,27 @@
+{#
+  engagement.html.j2 — Flickr engagement stats on photo sidecar.
+
+  Row 1: views/faves shown in flickr-origin with mono-caps provenance label;
+         block is entirely absent in standalone.
+#}
+
+{% macro engagement(photo) -%}
+{% if flickr_origin -%}
+{%- set _views = photo.counts.get('views') -%}
+{%- set _faves = photo.counts.get('faves') -%}
+{%- if _views or _faves %}
+<div class="engagement">
+  <div class="provenance">ON FLICKR · {{ photo.date_imported | date_short }}</div>
+  <div class="stats">
+    {%- if _views and _faves -%}
+      {{ _views | format_number }} views · {{ _faves | format_number }} faves
+    {%- elif _views -%}
+      {{ _views | format_number }} views
+    {%- elif _faves -%}
+      {{ _faves | format_number }} faves
+    {%- endif -%}
+  </div>
+</div>
+{%- endif %}
+{%- endif %}
+{%- endmacro %}

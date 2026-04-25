@@ -1,0 +1,36 @@
+{% extends "base.html.j2" %}
+{% set active = 'albums' %}
+{% block title %}Albums — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title">Albums</h1>
+  {% if albums %}
+  <div class="page-title-counts"><span><strong>{{ albums | length | format_number }}</strong> albums</span></div>
+  {% endif %}
+</div>
+{% if albums %}
+<ul class="collection-list">
+  {% for album in albums %}
+  <li class="collection-item">
+    <a href="{{ base_url }}albums/{{ album.id }}.html" class="collection-link">
+      {% if cover_thumbs.get(album.id) %}
+      <img src="{{ base_url }}thumbs/{{ cover_thumbs[album.id] }}.webp"
+           alt="{{ album.title | e }}" class="collection-thumb" loading="lazy">
+      {% else %}
+      <div class="collection-thumb collection-thumb--placeholder"></div>
+      {% endif %}
+      <div class="collection-info">
+        <strong dir="auto">{{ album.title | e }}</strong>
+        <span class="collection-count">{{ album.photo_count | format_number }} photos</span>
+        {% if album.description_html %}
+        <p class="collection-desc" dir="auto">{{ album.description_html | striptags | truncate(80) }}</p>
+        {% endif %}
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">No albums in this archive — albums are sets of your own photos, and none were included in this export.</p>
+{% endif %}
+{% endblock %}

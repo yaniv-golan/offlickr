@@ -1,0 +1,46 @@
+{% extends "base.html.j2" %}
+{% set active = 'galleries' %}
+{% block title %}{{ gallery.title }} — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title" dir="auto">{{ gallery.title | e }}</h1>
+{% if gallery.description_html %}
+<div class="album-description" dir="auto">{{ gallery.description_html | safe }}</div>
+{% endif %}
+<div class="photostream-grid">
+  {% for item in photo_items %}
+  {% if item.local %}
+  {% set m = item.photo.media %}
+  {% set ratio = (m.width / m.height) if (m and m.width and m.height) else 1.0 %}
+  <a href="{{ base_url }}{{ photo_href[item.photo.id] }}" class="grid-tile"
+     title="{{ item.photo.title }}"
+     style="flex-basis:calc(var(--thumb-h) * {{ '%.4f' | format(ratio) }})">
+    {% if m %}
+    <img src="{{ base_url }}thumbs/{{ item.photo.id }}.webp"
+         alt="{{ item.photo.title | e }}" loading="lazy">
+    {% endif %}
+    <span class="tile-caption" dir="auto">{{ item.photo.title | e }}</span>
+  </a>
+  {% else %}
+  <a href="{{ item.url }}" rel="noopener noreferrer external" class="grid-tile tombstone">
+    <span class="tombstone-label">Photo on Flickr ↗</span>
+  </a>
+  {% endif %}
+  {% endfor %}
+</div>
+{% if comments %}
+<section class="comments album-comments" aria-label="Comments">
+  <h2>Comments ({{ comments | length }})</h2>
+  {% for comment in comments %}
+  <article class="comment">
+    <header class="comment-header">
+      <span class="comment-author">
+        <a href="https://www.flickr.com/people/{{ comment.user_nsid | e }}/" rel="noopener noreferrer external">{{ comment.user_nsid | e }}</a>
+      </span>
+      <time datetime="{{ comment.date.isoformat() }}">{{ comment.date | format_date }}</time>
+    </header>
+    <div class="comment-body" dir="auto">{{ comment.body_html | rewrite_urls(base_url) | safe }}</div>
+  </article>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

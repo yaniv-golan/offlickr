@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+{% set active = 'galleries' %}
+{% block title %}Galleries — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title">Galleries</h1>
+  {% if galleries %}
+  <div class="page-title-counts"><span><strong>{{ galleries | length | format_number }}</strong> galleries</span></div>
+  {% endif %}
+</div>
+{% if galleries %}
+<ul class="collection-list">
+  {% for gallery in galleries %}
+  <li class="collection-item">
+    <a href="{{ base_url }}galleries/{{ gallery.id }}.html" class="collection-link">
+      <div class="collection-info">
+        <strong dir="auto">{{ gallery.title | e }}</strong>
+        <span class="collection-count">{{ gallery.photo_count | format_number }} photos</span>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">No galleries in this archive — galleries are curated sets of other people's photos, and yours didn't include any.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{#
+  flickr_attribution.html.j2 — HTML <head> meta, nav @handle, and "View on Flickr" links.
+
+  Row 6  head_meta(canonical_url)     — noindex + canonical in flickr-origin; nothing in standalone.
+  Row 9  nav_handle(account)          — @handle links to Flickr profile in flickr-origin; plain <span> in standalone.
+  Row 10 sidecar_links(photo,base_url)  — "View on Flickr" + download link on photo pages.
+  Row 10 view_on_flickr_album(album)  — "View on Flickr" link in album meta, flickr-origin only.
+
+  base_url is a per-page render variable (depth-relative, e.g. "../../"), NOT a Jinja2 global.
+  Macros that generate hrefs or src paths must receive it as an explicit parameter.
+#}
+
+{% macro head_meta(canonical_url) -%}
+{% if flickr_origin %}<meta name="robots" content="noindex">{% endif %}
+{% if flickr_origin and canonical_url %}<link rel="canonical" href="{{ canonical_url | e }}">{% endif %}
+{%- endmacro %}
+
+{% macro nav_handle(account) -%}
+{%- if account.real_name %}
+{%- if flickr_origin %}<a href="{{ account.profile_url | e }}" class="nav-handle" rel="noopener noreferrer external">@{{ account.screen_name | e }}</a>
+{%- else %}<span class="nav-handle">@{{ account.screen_name | e }}</span>
+{%- endif %}
+{%- endif %}
+{%- endmacro %}
+
+{% macro sidecar_links(photo, base_url) -%}
+<p class="sidecar-links">
+  {% if flickr_origin %}<a href="{{ photo.photopage_url }}" rel="noopener noreferrer external" class="external-link">View on Flickr</a>{% endif %}
+  {% if photo.media %}{%- if flickr_origin %} · {% endif %}<a href="{{ base_url }}originals/{{ photo.id }}{{ photo.media.ext }}">{%- if photo.media.bytes %}{{ photo.media.bytes | format_filesize }} · {% endif %}{{ photo.media.ext | format_media_type }} original</a>{% endif %}
+</p>
+{%- endmacro %}
+
+{% macro view_on_flickr_album(album) -%}
+{%- if flickr_origin %} &middot; <a href="{{ album.url_flickr }}" rel="noopener noreferrer external" class="external-link">View on Flickr</a>{% endif %}
+{%- endmacro %}

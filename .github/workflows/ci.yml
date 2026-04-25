@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+      - run: uv sync --all-extras --dev
+      - run: uv run ruff check
+      - run: uv run ruff format --check
+      - run: uv run mypy src tests
+      - name: Conventional Commits (PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          uv run cz check --rev-range "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+
+  test:
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write  # for Codecov OIDC
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # diff-cover needs main's history
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv sync --all-extras --dev
+      - run: uv run pytest --cov=offlickr --cov-report=xml --cov-report=term-missing
+      - name: Patch coverage vs main
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          uv run diff-cover coverage.xml --compare-branch=origin/${{ github.event.pull_request.base.ref }} --fail-under=80
+      - uses: codecov/codecov-action@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
+        with:
+          use_oidc: true
+          files: ./coverage.xml
+          fail_ci_if_error: false
+
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_DATE_EPOCH: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+      - run: uv build
+      - name: Reproducible-build smoke test
+        run: |
+          # Keep build artifacts outside workspace so hatchling doesn't include them
+          cp -r dist /tmp/dist-build-1
+          rm -rf dist
+          uv build
+          cp -r dist /tmp/dist-build-2
+          # Compare wheel bytes (zip timestamps zeroed by SOURCE_DATE_EPOCH)
+          diff /tmp/dist-build-1/offlickr-*.whl /tmp/dist-build-2/offlickr-*.whl
+          # Compare sdist contents (gzip header mtime may differ; contents must not)
+          mkdir -p /tmp/sdist-1 /tmp/sdist-2
+          tar xzf /tmp/dist-build-1/offlickr-*.tar.gz -C /tmp/sdist-1
+          tar xzf /tmp/dist-build-2/offlickr-*.tar.gz -C /tmp/sdist-2
+          diff -r /tmp/sdist-1 /tmp/sdist-2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  audit:
+    needs: lint
+    runs-on: ubuntu-latest
+    continue-on-error: true  # advisory in v1 per spec §13.2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+      - run: uv sync --all-extras --dev
+        # CVE-2026-3219: pip archive-confusion bug; no fix released yet — remove ignore when pip >26.0.1 ships
+      - run: uv run pip-audit --strict --ignore-vuln CVE-2026-3219
+
+  docs:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npx -y markdownlint-cli2 "**/*.md" "#node_modules"

@@ -1,0 +1,82 @@
+{% extends "base.html.j2" %}
+{% set active = 'photos' %}
+{% block title %}{% if year %}{{ year }} — {% endif %}Date Archive — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title">{% if year %}{{ year }}{% else %}Undated{% endif %}</h1>
+  <div class="page-title-counts">
+    <span><strong>{{ total | format_number }}</strong> photo{{ 's' if total != 1 else '' }}</span>
+    <span><a href="{{ base_url }}archive/index.html">← Archive</a></span>
+  </div>
+</div>
+
+{% if use_sparkline %}
+<div class="sparkline" aria-label="Photos per month in {{ year }}">
+  {% for month in months %}
+  <div class="sparkline-row">
+    <span class="sparkline-month-label">{{ month.label }}</span>
+    <div class="sparkline-cells">
+      {% for cell in month.cells %}
+      {% if cell.count > 0 %}
+      <a class="sparkline-cell"
+         data-density="{{ cell.density }}"
+         href="#{{ cell.anchor }}"
+         aria-label="{{ cell.day }} {{ month.label }}: {{ cell.count }} photo{{ 's' if cell.count != 1 else '' }}"></a>
+      {% else %}
+      <span class="sparkline-cell" data-density="0" aria-hidden="true"></span>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if day_sections %}
+<div class="archive-days">
+  {% set _prev_month = namespace(v=-1) %}
+  {% for section in day_sections %}
+  {% if section.month != _prev_month.v %}{% set _prev_month.v = section.month %}
+  <div class="month-anchor" id="{{ section.month_anchor }}" style="scroll-margin-top:4rem"></div>
+  {% endif %}
+  <div class="day-section" id="{{ section.anchor }}" style="scroll-margin-top:4rem">
+    <h3 class="day-section-heading">{{ section.label }}</h3>
+    <div class="archive-day-grid">
+      {% for photo in section.photos %}
+      {% if photo.media %}
+      <a href="{{ base_url }}{{ photo_href[photo.id] }}" class="archive-thumb-link">
+        <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+             alt="{{ photo.title | e }}"
+             class="archive-thumb" loading="lazy">
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if undated_photos %}
+<div class="archive-days">
+  <div class="day-section">
+    <h3 class="day-section-heading">Photos without a date</h3>
+    <div class="archive-day-grid">
+      {% for photo in undated_photos %}
+      {% if photo.media %}
+      <a href="{{ base_url }}{{ photo_href[photo.id] }}" class="archive-thumb-link">
+        <img src="{{ base_url }}thumbs/{{ photo.id }}.webp"
+             alt="{{ photo.title | e }}"
+             class="archive-thumb" loading="lazy">
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if not day_sections and not undated_photos %}
+<p class="empty-state">No photos for this period.</p>
+{% endif %}
+{% endblock %}

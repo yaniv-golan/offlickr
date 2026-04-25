@@ -1,0 +1,6 @@
+{
+  "faves": [
+    { "photo_id": "98765432", "photo_url": "http://flic.kr/p/ABCDE" },
+    { "photo_id": "98765433", "photo_url": "http://flic.kr/p/ABCDF" }
+  ]
+}

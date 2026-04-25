@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block title %}Sent Mail — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Sent Mail</h1>
+<p class="private-notice">Private</p>
+{% if messages %}
+<table class="mail-table" id="mail-table">
+  <thead><tr><th>To</th><th>Subject</th><th>Date</th></tr></thead>
+  <tbody>
+  {% for msg in messages %}
+  <tr class="mail-row">
+    <td>{{ (msg.to_user_name or msg.to_nsid) | e }}</td>
+    <td class="mail-subject">{{ msg.subject | e }}</td>
+    <td><time datetime="{{ msg.date_sent.isoformat() }}">{{ msg.date_sent | format_date }}</time></td>
+  </tr>
+  <tr class="mail-body-row">
+    <td colspan="3"><div class="mail-body" dir="auto">{{ msg.body_html | safe }}</div></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}<p class="empty-state">No sent messages.</p>{% endif %}
+{% endblock %}

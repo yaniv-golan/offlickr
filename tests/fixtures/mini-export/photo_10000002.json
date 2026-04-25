@@ -1,0 +1,29 @@
+{
+  "id": "10000002",
+  "name": "Test photo 2",
+  "description": "",
+  "count_views": "2",
+  "count_faves": "0",
+  "count_comments": "0",
+  "date_taken": "2020-04-01 10:00:00",
+  "count_tags": "0",
+  "count_notes": "1",
+  "rotation": 0,
+  "date_imported": "2020-04-01 11:00:00",
+  "photopage": "https://www.flickr.com/photos/testuser/10000002/",
+  "original": "https://live.staticflickr.com/9999/10000002_bbbbbbbbbb_o.jpg",
+  "license": "CC BY-NC-SA 4.0",
+  "geo": [],
+  "groups": [],
+  "albums": [{"id": "10000000000000001", "title": "Album One", "url": "https://www.flickr.com/photos/testuser/sets/10000000000000001/"}],
+  "tags": [],
+  "people": [],
+  "notes": [
+    {"id": "n1", "x": 10, "y": 20, "w": 100, "h": 50, "note": "See the building", "author": "99999999@N00"}
+  ],
+  "privacy": "public",
+  "comment_permissions": "any flickr member",
+  "tagging_permissions": "people you follow",
+  "safety": "safe",
+  "comments": []
+}

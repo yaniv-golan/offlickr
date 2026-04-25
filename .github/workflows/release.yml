@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+      - "v*.*.*-rc*"
+      - "v*.*.*-beta*"
+      - "v*.*.*-alpha*"
+
+permissions:
+  contents: write
+  id-token: write  # for PyPI trusted publishing
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.vars.outputs.version }}
+      prerelease: ${{ steps.vars.outputs.prerelease }}
+      notes_file: ${{ steps.vars.outputs.notes_file }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: vars
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [[ "$VERSION" =~ -(rc|beta|alpha) ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+          NOTES="docs/release-notes/v${VERSION}.md"
+          PATCH_FALLBACK="docs/release-notes/v$(echo "$VERSION" | cut -d. -f1-2).x-patch.md"
+          if [ -f "$NOTES" ]; then
+            echo "notes_file=$NOTES" >> "$GITHUB_OUTPUT"
+          elif [ -f "$PATCH_FALLBACK" ]; then
+            echo "notes_file=$PATCH_FALLBACK" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Missing release notes. Expected $NOTES or $PATCH_FALLBACK"
+            exit 1
+          fi
+      - name: Verify pyproject version matches tag
+        run: |
+          PYPROJECT_VERSION=$(python -c "import tomllib, pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version'])")
+          if [ "$PYPROJECT_VERSION" != "${{ steps.vars.outputs.version }}" ]; then
+            echo "::error::pyproject.toml version ($PYPROJECT_VERSION) does not match tag (${{ steps.vars.outputs.version }})"
+            exit 1
+          fi
+      - name: Verify CHANGELOG has a dated section for this version
+        run: |
+          if ! grep -qE "^## \[${{ steps.vars.outputs.version }}\] - [0-9]{4}-[0-9]{2}-[0-9]{2}" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md is missing a dated section for version ${{ steps.vars.outputs.version }}"
+            exit 1
+          fi
+
+  build:
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+      - run: uv build
+      - name: Generate SBOM
+        run: |
+          uv run --with cyclonedx-bom python -m cyclonedx_py environment -o sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            dist/
+            sbom.cdx.json
+
+  publish:
+    needs: [preflight, build]
+    runs-on: ubuntu-latest
+    environment: pypi  # configure Trusted Publishing in this environment
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: .
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+          skip-existing: true
+
+  github-release:
+    needs: [preflight, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: .
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "offlickr ${GITHUB_REF_NAME}" \
+            --notes-file "${{ needs.preflight.outputs.notes_file }}" \
+            ${{ needs.preflight.outputs.prerelease == 'true' && '--prerelease' || '' }} \
+            dist/* sbom.cdx.json \
+            || gh release upload "${GITHUB_REF_NAME}" dist/* sbom.cdx.json --clobber

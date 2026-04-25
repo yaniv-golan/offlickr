@@ -1,0 +1,70 @@
+{% extends "base.html.j2" %}
+{% set active = 'tags' %}
+{% block title %}Tags — {{ account.screen_name }}{% endblock %}
+{% block content %}
+<div class="page-title-block">
+  <h1 class="page-title">Tags</h1>
+  {% if tag_entries %}
+  <div class="page-title-counts"><span><strong>{{ tag_entries | length | format_number }}</strong> tags</span></div>
+  {% endif %}
+</div>
+{% if tag_entries %}
+{# Hidden anchor targets for CSS :target sort switching #}
+<span id="sort-anchor-alpha" aria-hidden="true"></span>
+<span id="sort-anchor-count" aria-hidden="true"></span>
+<span id="sort-anchor-first" aria-hidden="true"></span>
+<nav class="filter-row" aria-label="Sort tags">
+  <a href="#sort-anchor-alpha">Alpha</a>
+  <a href="#sort-anchor-count">Count</a>
+  <a href="#sort-anchor-first">First</a>
+</nav>
+{% if tag_first_letters %}
+<nav class="tag-letter-strip" aria-label="Jump to letter">
+  {% for letter in tag_first_letters %}
+  <a href="#tag-letter-{{ letter }}">{{ letter }}</a>
+  {% endfor %}
+</nav>
+{% endif %}
+{% if tag_entries_count | length > 3 %}
+<div class="tags-top20" aria-label="Top tags by count">
+  <h2 class="tags-top20-heading">Most used</h2>
+  <div class="tag-cloud">
+    {% for entry in tag_entries_count[:20] %}
+    <a href="{{ base_url }}tags/{{ entry.slug }}.html"
+       class="tag-cloud-item tag-size-{{ entry.bucket }}"
+       dir="auto">{{ entry.tag | e }}<span class="tag-count">{{ entry.count | format_number }}</span></a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+<div class="tags-by-alpha tag-cloud" aria-label="Tags sorted alphabetically">
+  {% set ns = namespace(prev_letter='') %}
+  {% for entry in tag_entries %}
+  {% set first = entry.tag[0].upper() %}
+  {% if first != ns.prev_letter %}
+  <span id="tag-letter-{{ first }}" class="tag-letter-anchor" aria-hidden="true"></span>
+  {% set ns.prev_letter = first %}
+  {% endif %}
+  <a href="{{ base_url }}tags/{{ entry.slug }}.html"
+     class="tag-cloud-item tag-size-{{ entry.bucket }}"
+     dir="auto">{{ entry.tag | e }}<span class="tag-count">{{ entry.count | format_number }}</span></a>
+  {% endfor %}
+</div>
+<div class="tags-by-count tag-cloud" aria-label="Tags sorted by count">
+  {% for entry in tag_entries_count %}
+  <a href="{{ base_url }}tags/{{ entry.slug }}.html"
+     class="tag-cloud-item tag-size-{{ entry.bucket }}"
+     dir="auto">{{ entry.tag | e }}<span class="tag-count">{{ entry.count | format_number }}</span></a>
+  {% endfor %}
+</div>
+<div class="tags-by-first tag-cloud" aria-label="Tags sorted by first used">
+  {% for entry in tag_entries_first_used %}
+  <a href="{{ base_url }}tags/{{ entry.slug }}.html"
+     class="tag-cloud-item tag-size-{{ entry.bucket }}"
+     dir="auto">{{ entry.tag | e }}<span class="tag-count">{{ entry.count | format_number }}</span></a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">No tags in this archive — none of your photos were tagged.</p>
+{% endif %}
+{% endblock %}
