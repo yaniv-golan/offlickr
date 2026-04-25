@@ -74,17 +74,6 @@ jobs:
             dist/
             sbom.cdx.json
 
-  provenance:
-    needs: build
-    permissions:
-      id-token: write
-      contents: read
-      actions: read
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
-    with:
-      base64-subjects: ${{ needs.build.outputs.hashes }}
-      upload-assets: true
-
   publish:
     needs: [preflight, build]
     runs-on: ubuntu-latest
