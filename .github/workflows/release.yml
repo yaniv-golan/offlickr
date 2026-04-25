@@ -86,6 +86,7 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
+          skip-existing: true
 
   github-release:
     needs: [preflight, build]
@@ -104,4 +105,5 @@ jobs:
             --title "offlickr ${GITHUB_REF_NAME}" \
             --notes-file "${{ needs.preflight.outputs.notes_file }}" \
             ${{ needs.preflight.outputs.prerelease == 'true' && '--prerelease' || '' }} \
-            dist/* sbom.cdx.json
+            dist/* sbom.cdx.json \
+            || gh release upload "${GITHUB_REF_NAME}" dist/* sbom.cdx.json --clobber
