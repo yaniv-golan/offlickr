@@ -9,8 +9,7 @@ on:
       - "v*.*.*-alpha*"
 
 permissions:
-  contents: write
-  id-token: write  # for PyPI trusted publishing
+  contents: read
 
 jobs:
   preflight:
@@ -78,6 +77,9 @@ jobs:
     needs: [preflight, build]
     runs-on: ubuntu-latest
     environment: pypi  # configure Trusted Publishing in this environment
+    permissions:
+      id-token: write  # for PyPI trusted publishing
+      contents: read
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4
         with:
@@ -91,6 +93,8 @@ jobs:
   github-release:
     needs: [preflight, build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # to create GitHub releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4

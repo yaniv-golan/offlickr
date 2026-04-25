@@ -15,7 +15,7 @@ try:
 
     _register_heif()
 except ImportError:
-    pass
+    pass  # optional dependency; HEIF support is simply unavailable without it
 
 Image.MAX_IMAGE_PIXELS = 400_000_000  # allow large panoramas (default is ~178 MP)
 
