@@ -93,7 +93,7 @@ def test_search_js_copied(built_site: Path) -> None:
 def test_external_links_have_rel(built_site: Path, photo_href: dict[str, str]) -> None:
     """Every link to flickr.com must have rel='noopener noreferrer external'."""
     soup = _parse(built_site / photo_href["10000001"])
-    flickr_links = [a for a in soup.find_all("a", href=True) if "flickr.com" in str(a["href"])]
+    flickr_links = [a for a in soup.find_all("a", href=True) if is_flickr_url(str(a["href"]))]
     for link in flickr_links:
         rel = cast(list[str], link.get("rel") or [])
         assert "noopener" in rel

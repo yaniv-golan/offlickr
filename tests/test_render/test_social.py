@@ -2,6 +2,8 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+from offlickr.render.filters import is_flickr_url
+
 
 def _parse(path: Path) -> BeautifulSoup:
     return BeautifulSoup(path.read_text(encoding="utf-8"), "html.parser")
@@ -26,7 +28,7 @@ def test_groups_index_has_flickr_links(built_site: Path) -> None:
     links = [
         str(a["href"])
         for a in soup.find_all("a", href=True)
-        if "flickr.com" in str(a.get("href", ""))
+        if is_flickr_url(str(a.get("href", "")))
     ]
     assert len(links) >= 1
 
