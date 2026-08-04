@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "offlickr"
-version = "0.1.0"
+version = "0.1.1"
 description = "Turn a Flickr 'Your Flickr Data' export into a self-contained offline website."
 readme = "README.md"
 license = "MIT"
@@ -106,6 +106,6 @@ exclude_also = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
+version = "0.1.1"
 tag_format = "v$version"
 version_files = ["pyproject.toml:version"]
