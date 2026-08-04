@@ -12,7 +12,7 @@
 
 **offlickr** turns a Flickr [*Your Flickr Data*](https://www.flickrhelp.com/hc/en-us/articles/4404079675156-Downloading-content-from-Flickr) export into a self-contained static website — a browsable offline archive of your photostream, albums, galleries, and profile. Zero runtime dependencies, works from `file://`, USB stick, or any static host.
 
-> **Status:** alpha (v0.1.0). Ingest, derive, render, and external asset fetch are all working.
+> **Status:** alpha (v0.1.1). Ingest, derive, render, and external asset fetch are all working.
 >
 > **New to the command line?** Copy this prompt into Claude, ChatGPT, or any AI assistant:
 >
